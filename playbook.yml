@@ -1,0 +1,44 @@
+---
+- name: Déploiement de la Voting App
+  hosts: localhost
+  become: yes
+
+  vars:
+    github_token: "{{ lookup('env', 'GITHUB_TOKEN') }}"  # Récupère le token depuis l'environnement
+    github_repo: "YohanVotingApp/voting-app"
+
+  tasks:
+    - name: Installer les dépendances du système
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - git
+        state: present
+        update_cache: yes
+
+    - name: Cloner le dépôt privé avec un token
+      git:
+        repo: "https://{{ lookup('env', 'GITHUB_TOKEN') }}@github.com/yohanhebrard/YohanVotingApp-voting-app.git"
+        dest: /opt/voting-app
+        version: main
+        force: yes
+
+
+    - name: Créer un environnement virtuel pour Python
+      command: python3 -m venv /opt/voting-app/venv
+
+    - name: Installer les dépendances Python dans le venv
+      pip:
+        name:
+          - flask
+          - redis
+          - requests
+          - gunicorn
+        virtualenv: /opt/voting-app/venv
+
+    - name: Démarrer l'application Flask avec Gunicorn
+      shell: |
+        source /opt/voting-app/venv/bin/activate
+        nohup gunicorn --bind 0.0.0.0:80 main:app &

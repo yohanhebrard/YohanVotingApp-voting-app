@@ -1,0 +1,31 @@
+services:
+  voting-app:
+    build:
+      context: ./azure-vote
+    ports:
+      - "8080:80"
+    environment:
+      - REDIS=redis
+      - REDIS_PWD=yohanhebrard
+      - VOTE1VALUE=Cats
+      - VOTE2VALUE=Dogs
+      - TITLE=Voting App
+    depends_on:
+      - redis
+    networks:
+      - voting-network
+
+  redis:
+    image: redis:7
+    command: redis-server --requirepass "yohanhebrard"
+    networks:
+      - voting-network
+    volumes:
+      - redis-data:/data
+
+networks:
+  voting-network:
+    driver: bridge
+
+volumes:
+  redis-data:

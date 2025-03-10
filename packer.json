@@ -1,0 +1,26 @@
+{
+    "variables": {
+        "docker_image": "ubuntu:latest",
+        "docker_tag": "voting-app"
+    },
+    "builders": [
+        {
+            "type": "docker",
+            "image": "{{user `docker_image`}}",
+            "commit": true
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "playbook_file": "playbook.yml"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "docker-tag",
+            "repository": "yohanhebrard/voting-app",
+            "tag": "{{user `docker_tag`}}"
+        }
+    ]
+}
