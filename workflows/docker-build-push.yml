@@ -37,6 +37,6 @@ jobs:
        sarif-file: scout-results.sarif
        
    - name: Upload SARIF file
-     uses: github/codeql-action/upload-sarif@v3
+     uses: github/codeql-action/upload-sarif@v3  # Mise à jour vers v3
      with:
-       sarif_file: scout-results.sarif
+     sarif_file: scout-results.sarif
